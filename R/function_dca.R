@@ -1,3 +1,17 @@
+#' Give a column and row name to all DCA components in a list
+#'
+#' This function attribute a named number from 1:size of columns or rows at each
+#' matrix component.
+#'
+#' @param data DCA components list
+#' @return A list containing all DCA components correctly named
+
+cols_n_rows_names <- function(data) {
+  g <- lapply(data, function(x) `colnames<-`(x, 1:ncol(x)))
+  g <- lapply(g, function(x) `rownames<-`(x, 1:nrow(x)))
+  return(g)
+}
+
 #' Runs the DCA method
 #'
 #' This function runs the entire Data Concentration Analysis to the desired dataset.
@@ -11,9 +25,10 @@
 #' @export
 
 dca <- function(data, n_fd, n_sd, periods) {
+  A <- data
   s <- n_sd
   r <- n_fd
-  
+
   ###sd totals
   TSD = tibble::tibble()
   for (k in 1:s) {
@@ -26,7 +41,7 @@ dca <- function(data, n_fd, n_sd, periods) {
     TSD = rbind(TSD,v)
     TSD = as.matrix(TSD)
   }
-  
+
   ###fd totals
   TFD = tibble::tibble()
   for (i in 1:r) {
@@ -39,12 +54,12 @@ dca <- function(data, n_fd, n_sd, periods) {
     TFD = rbind(TFD,v)
     TFD = as.matrix(TFD)
   }
-  
+
   ###totals
   TOTAL <- colSums(TSD)
   TOTAL <- as.matrix(t(TOTAL))
   h <- ncol(TOTAL)
-  
+
   ###fd globals percents
   GPFD <- tibble::tibble()
   for (k in 1:r) {
@@ -53,7 +68,7 @@ dca <- function(data, n_fd, n_sd, periods) {
     }
   }
   GPFD <- as.matrix(GPFD)
-  
+
   ###sd globals percents
   GPSD <- tibble::tibble()
   for (i in 1:s) {
@@ -73,8 +88,8 @@ dca <- function(data, n_fd, n_sd, periods) {
     for (i in 1:r) {
       j = (k-1)*r+i
       for (n in 1:h) {
-        ifelse(A[j,n] == 0, 
-               c(LQFD[j,n] <- 0, LQSD[j,n] <- 0, LPFD[j,n] <- 0, LPSD[j,n] <- 0, GP[j,n] <- 0), 
+        ifelse(A[j,n] == 0,
+               c(LQFD[j,n] <- 0, LQSD[j,n] <- 0, LPFD[j,n] <- 0, LPSD[j,n] <- 0, GP[j,n] <- 0),
                c(LQFD[j,n] <- (A[j,n]/TFD[i,n])/((TSD[k,n])/(TOTAL[,n])),
                  LPFD[j,n] <- A[j,n]/TFD[i,n],
                  LPSD[j,n] <- A[j,n]/TSD[k,n],
@@ -88,7 +103,7 @@ dca <- function(data, n_fd, n_sd, periods) {
   LPFD <- as.matrix(LPFD)
   LPSD <- as.matrix(LPSD)
   GP <- as.matrix(GP)
-  
+
   ###fd concentration index
   p <- h-periods+1
   MLQFD <- tibble::tibble()
@@ -113,7 +128,7 @@ dca <- function(data, n_fd, n_sd, periods) {
     }
   }
   ICFD <- as.matrix(ICFD)
-  
+
   ###sd concentration index
   p <- h-periods+1
   MLQSD <- tibble::tibble()
@@ -138,7 +153,7 @@ dca <- function(data, n_fd, n_sd, periods) {
     }
   }
   ICSD <- as.matrix(ICSD)
-  
+
   ###consolide components and return it
   dca_component <- list(TFD=TFD,
                         TSD=TSD,
@@ -152,6 +167,8 @@ dca <- function(data, n_fd, n_sd, periods) {
                         LQSD=LQSD,
                         ICFD=ICFD,
                         ICSD=ICSD)
-  
+
+  dca_component <- cols_n_rows_names(dca_component)
+
   return(dca_component)
 }
