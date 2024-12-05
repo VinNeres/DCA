@@ -28,7 +28,7 @@ dca <- function(data, n_fd, n_sd, periods) {
   A <- data
   s <- n_sd
   r <- n_fd
-  cat("Aggregating FD and SD variables.")
+  cat("Aggregating FD and SD variables.\n")
   ###sd totals
   TSD = tibble::tibble()
   for (k in 1:s) {
@@ -59,7 +59,7 @@ dca <- function(data, n_fd, n_sd, periods) {
   TOTAL <- colSums(TSD)
   TOTAL <- as.matrix(t(TOTAL))
   h <- ncol(TOTAL)
-  cat("Calculating Percentages.")
+  cat("Calculating Percentages.\n")
   ###fd globals percents
   GPFD <- tibble::tibble()
   for (k in 1:r) {
@@ -77,7 +77,7 @@ dca <- function(data, n_fd, n_sd, periods) {
     }
   }
   GPSD <- as.matrix(GPSD)
-  cat("Calculating QLD.")
+  cat("Calculating QLD.\n")
   ###quocient location
   LQFD <- tibble::tibble()
   LQSD <- tibble::tibble()
@@ -103,7 +103,7 @@ dca <- function(data, n_fd, n_sd, periods) {
   LPFD <- as.matrix(LPFD)
   LPSD <- as.matrix(LPSD)
   GP <- as.matrix(GP)
-  cat("Calculating CI.")
+  cat("Calculating CI.\n")
   ###fd concentration index
   p <- h-periods+1
   MLQFD <- tibble::tibble()
@@ -153,7 +153,7 @@ dca <- function(data, n_fd, n_sd, periods) {
     }
   }
   ICSD <- as.matrix(ICSD)
-  cat("Consolidating and finalizing.")
+  cat("Consolidating and finalizing.\n")
   ###consolide components and return it
   dca_component <- list(TFD=TFD,
                         TSD=TSD,
