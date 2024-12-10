@@ -1,0 +1,19 @@
+Package: DCA
+Title: Data Concentration Analysis Package
+Version: 0.0.1
+Authors@R: 
+    person("Vinícius", "Neres da Conceição", , "vneres.dc@hotmail.com", role = c("aut", "cre"))
+Description: Runs properly the Data Concentration Analysis methodology using the Dynamic Location Quotient as default concentration parameter.
+License: `use_gpl3_license()`
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Imports:
+	tibble,
+	dplyr
+Depends: 
+    R (>= 2.10)
+LazyData: true
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
