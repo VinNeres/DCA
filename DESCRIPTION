@@ -1,6 +1,6 @@
 Package: DCA
 Title: Data Concentration Analysis Package
-Version: 0.0.1
+Version: 0.0.2
 Authors@R: 
     person("Vinícius", "Neres da Conceição", , "vneres.dc@hotmail.com", role = c("aut", "cre"))
 Description: Runs properly the Data Concentration Analysis methodology using the Dynamic Location Quotient as default concentration parameter.

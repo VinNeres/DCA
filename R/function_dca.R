@@ -22,20 +22,22 @@ cols_n_rows_labels <- function(data, n_fd, n_sd, periods, fd_names, sd_names , p
   per_names <- paste0(t_anos, "-", t_anos_pos)[1:(length(t_anos) - (periods-1))]
   spec_vars <- c("TFD","TSD","TOTAL")
   comp_vars <- c("LPFD","LPSD","GP","LQFD","LQSD")
-  time_vars <- c("TFD","TSD","TOTAL","LPFD","LPSD","GPFD","GPSD","GP","LQFD","LQSD")
+  time_vars <- c("TFD","TSD","LPFD","LPSD","GPFD","GPSD","GP","LQFD","LQSD")
   per_vars <- c("ICFD", "ICSD")
 
   data[c("TFD","GPFD","ICFD")] <- lapply(data[c("TFD","GPFD","ICFD")], function(x) `rownames<-`(x, 1:nrow(x)))
   data[c("TSD","GPSD","ICSD")] <- lapply(data[c("TSD","GPSD","ICSD")], function(x) `rownames<-`(x, 1:nrow(x)))
-  data["TOTAL"] <- lapply(data["TOTAL"], function(x) `rownames<-`(x, 1:nrow(x)))
-  data[comp_vars] <- lapply(data[comp_vars], function(x) `rownames<-`(x, 1:nrow(x)))
-  data["TOTAL"] <- lapply(data["TOTAL"], function(x) as_tibble(x) %>%
+  data["TOTAL"] <- lapply(data["TOTAL"], function(x) `rownames<-`(x, 1:nrow(x)) %>%
+                            `colnames<-`(1:ncol(x)) %>% as_tibble() %>%
                             add_column(total_name = "TOTAL", .before = 1))
+  data[comp_vars] <- lapply(data[comp_vars], function(x) `rownames<-`(x, 1:nrow(x)))
 
   if(is.null(periods_names)){
     data <- lapply(data, function(x) `colnames<-`(x, 1:ncol(x)))
+    data["TOTAL"] <- lapply(data["TOTAL"], function(x) `colnames<-`(x, 1:ncol(x)))
   } else{
     data[time_vars] <- lapply(data[time_vars], function(x) `colnames<-`(x, t_anos))
+    data["TOTAL"] <- lapply(data["TOTAL"], function(x) `colnames<-`(x, c("total_name",t_anos)))
     data[per_vars] <- lapply(data[per_vars], function(x) `colnames<-`(x, per_names))
   }
 
@@ -55,19 +57,19 @@ cols_n_rows_labels <- function(data, n_fd, n_sd, periods, fd_names, sd_names , p
                                              add_column(sd_name = sd_names, .before = 1))
   }
 
-  if(is.null(fd_names) | is.null(sd_names)){
+  if(is.null(fd_names) & is.null(sd_names)){
     data[comp_vars] <- lapply(data[comp_vars], function(x) as_tibble(x) %>%
                                 add_column(fd_name = rep(paste0("fd_name","_",1:n_fd), n_sd), .before = 1) %>%
                                 add_column(sd_name = rep(paste0("sd_name","_",1:n_sd), each = n_fd), .before = 2))
-  } else if(!is.null(fd_names) | is.null(sd_names)){
+  } else if(!is.null(fd_names) & is.null(sd_names)){
     data[comp_vars] <- lapply(data[comp_vars], function(x) as_tibble(x) %>%
                                 add_column(fd_name = rep(fd_names, n_sd), .before = 1) %>%
                                 add_column(sd_name = rep(paste0("sd_name","_",1:n_sd), each = n_fd), .before = 2))
-  } else if(is.null(fd_names) | !is.null(sd_names)){
+  } else if(is.null(fd_names) & !is.null(sd_names)){
     data[comp_vars] <- lapply(data[comp_vars], function(x) as_tibble(x) %>%
                                 add_column(fd_name = rep(paste0("fd_name","_",1:n_fd), n_sd), .before = 1) %>%
                                 add_column(sd_name = rep(sd_names, each = n_fd), .before = 2))
-  } else if(!is.null(fd_names) | !is.null(sd_names)){
+  } else if(!is.null(fd_names) & !is.null(sd_names)){
     data[comp_vars] <- lapply(data[comp_vars], function(x) as_tibble(x) %>%
                                 add_column(fd_name = rep(fd_names, n_sd), .before = 1) %>%
                                 add_column(sd_name = rep(sd_names, each = n_fd), .before = 2))
